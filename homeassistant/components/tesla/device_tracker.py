@@ -75,4 +75,4 @@ class TeslaDeviceEntity(TeslaDevice, TrackerEntity):
 
     def _process_websocket_message(self, data):
         if data.get("msg_type") and data["msg_type"] == "data:update":
-            self.hass.schedule_update_ha_state()
+            self.schedule_update_ha_state()
