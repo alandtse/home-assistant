@@ -40,7 +40,6 @@ class TeslaDeviceEntity(TeslaDevice, TrackerEntity):
     async def async_added_to_hass(self):
         """Register state update callback."""
         self.controller.register_websocket_callback(self._process_websocket_message)
-        await super().async_added_to_hass()
 
     async def async_update(self):
         """Update the device info."""
