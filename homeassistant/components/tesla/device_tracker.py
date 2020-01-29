@@ -35,6 +35,10 @@ class TeslaDeviceEntity(TeslaDevice, TrackerEntity):
         self._attributes = {"trackr_id": self.unique_id}
         self._listener = None
 
+    async def async_added_to_hass(self):
+        """Register state update callback."""
+        self.controller.register_websocket_callback(self._process_websocket_message)
+
     async def async_update(self):
         """Update the device info."""
         _LOGGER.debug("Updating device position: %s", self.name)
@@ -68,3 +72,7 @@ class TeslaDeviceEntity(TeslaDevice, TrackerEntity):
     def source_type(self):
         """Return the source type, eg gps or router, of the device."""
         return SOURCE_TYPE_GPS
+
+    def _process_websocket_message(self, data):
+        if data.get("msg_type") and data["msg_type"] == "data:update":
+            self.hass.schedule_update_ha_state()
