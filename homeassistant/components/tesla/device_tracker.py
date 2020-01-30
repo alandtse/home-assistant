@@ -74,5 +74,11 @@ class TeslaDeviceEntity(TeslaDevice, TrackerEntity):
         return SOURCE_TYPE_GPS
 
     def _process_websocket_message(self, data):
-        if data.get("msg_type") and data["msg_type"] == "data:update":
+        if (
+            data.get("msg_type")
+            and data["msg_type"] == "data:update"
+            and data.get("tag")
+            and data["tag"] == self.vehicle_id
+        ):
+            _LOGGER.debug("Updating %s by websockets", self.name)
             self.schedule_update_ha_state()
