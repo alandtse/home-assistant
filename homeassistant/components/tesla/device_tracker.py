@@ -73,7 +73,11 @@ class TeslaDeviceEntity(TeslaDevice, TrackerEntity):
             data.get("msg_type")
             and data["msg_type"] == "data:update"
             and data.get("tag")
+<<<<<<< HEAD
             and data["tag"] == str(self.tesla_device.vehicle_id())
+=======
+            and data["tag"] == self.tesla_device.vehicle_id()
+>>>>>>> Fix proper identification of vehicle id
         ):
             _LOGGER.debug("Updating %s by websockets", self.name)
             self._parse_location()
