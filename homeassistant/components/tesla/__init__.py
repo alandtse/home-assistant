@@ -130,6 +130,7 @@ async def async_setup_entry(hass, config_entry):
             update_interval=config_entry.options.get(
                 CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL
             ),
+            enable_websocket=True,
         )
         (refresh_token, access_token) = await controller.connect()
     except TeslaException as ex:
