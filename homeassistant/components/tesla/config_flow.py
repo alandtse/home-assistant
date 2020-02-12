@@ -15,7 +15,15 @@ from homeassistant.const import (
 from homeassistant.core import callback
 from homeassistant.helpers import aiohttp_client, config_validation as cv
 
-from .const import DEFAULT_SCAN_INTERVAL, DOMAIN, MIN_SCAN_INTERVAL
+from .const import (
+    CONF_ENABLE_WEBSOCKETS,
+    CONF_WAKE_ON_START,
+    DEFAULT_ENABLE_WEBSOCKETS,
+    DEFAULT_SCAN_INTERVAL,
+    DEFAULT_WAKE_ON_START,
+    DOMAIN,
+    MIN_SCAN_INTERVAL,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -103,7 +111,19 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     default=self.config_entry.options.get(
                         CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL
                     ),
-                ): vol.All(cv.positive_int, vol.Clamp(min=MIN_SCAN_INTERVAL))
+                ): vol.All(cv.positive_int, vol.Clamp(min=MIN_SCAN_INTERVAL)),
+                vol.Optional(
+                    CONF_ENABLE_WEBSOCKETS,
+                    default=self.config_entry.options.get(
+                        CONF_ENABLE_WEBSOCKETS, DEFAULT_ENABLE_WEBSOCKETS
+                    ),
+                ): bool,
+                vol.Optional(
+                    CONF_WAKE_ON_START,
+                    default=self.config_entry.options.get(
+                        CONF_WAKE_ON_START, DEFAULT_WAKE_ON_START
+                    ),
+                ): bool,
             }
         )
         return self.async_show_form(step_id="init", data_schema=data_schema)
