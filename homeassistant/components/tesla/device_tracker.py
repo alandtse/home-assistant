@@ -40,6 +40,7 @@ class TeslaDeviceEntity(TeslaDevice, TrackerEntity):
     async def async_added_to_hass(self):
         """Register state update callback."""
         self.controller.register_websocket_callback(self._process_websocket_message)
+        await super().async_added_to_hass()
 
     async def async_update(self):
         """Update the device info."""
@@ -74,10 +75,14 @@ class TeslaDeviceEntity(TeslaDevice, TrackerEntity):
             and data["msg_type"] == "data:update"
             and data.get("tag")
 <<<<<<< HEAD
+<<<<<<< HEAD
             and data["tag"] == str(self.tesla_device.vehicle_id())
 =======
             and data["tag"] == self.tesla_device.vehicle_id()
 >>>>>>> Fix proper identification of vehicle id
+=======
+            and data["tag"] == str(self.tesla_device.vehicle_id())
+>>>>>>> Fix bug with websockets updating device_tracker
         ):
             _LOGGER.debug("Updating %s by websockets", self.name)
             self._parse_location()
