@@ -38,20 +38,13 @@ class TeslaDeviceEntity(TeslaDevice, TrackerEntity):
     async def async_added_to_hass(self):
         """Register state update callback."""
         self.controller.register_websocket_callback(self._process_websocket_message)
+        await super().async_added_to_hass()
 
     async def async_update(self):
         """Update the device info."""
         _LOGGER.debug("Updating device position: %s", self.name)
         await super().async_update()
-        location = self.tesla_device.get_location()
-        if location:
-            self._latitude = location["latitude"]
-            self._longitude = location["longitude"]
-            self._attributes = {
-                "trackr_id": self.unique_id,
-                "heading": location["heading"],
-                "speed": location["speed"],
-            }
+        self._parse_location()
 
     @property
     def latitude(self) -> float:
@@ -78,7 +71,19 @@ class TeslaDeviceEntity(TeslaDevice, TrackerEntity):
             data.get("msg_type")
             and data["msg_type"] == "data:update"
             and data.get("tag")
-            and data["tag"] == self.tesla_device.vehicle_id()
+            and data["tag"] == str(self.tesla_device.vehicle_id())
         ):
             _LOGGER.debug("Updating %s by websockets", self.name)
+            self._parse_location()
             self.schedule_update_ha_state()
+
+    def _parse_location(self):
+        location = self.tesla_device.get_location()
+        if location:
+            self._latitude = location["latitude"]
+            self._longitude = location["longitude"]
+            self._attributes = {
+                "trackr_id": self.unique_id,
+                "heading": location["heading"],
+                "speed": location["speed"],
+            }
