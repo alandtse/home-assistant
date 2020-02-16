@@ -1,8 +1,10 @@
 """Support for tracking Tesla cars."""
+from datetime import timedelta
 import logging
 
 from homeassistant.components.device_tracker import SOURCE_TYPE_GPS
 from homeassistant.components.device_tracker.config_entry import TrackerEntity
+from homeassistant.util import Throttle
 
 from . import DOMAIN as TESLA_DOMAIN, TeslaDevice
 
@@ -66,6 +68,7 @@ class TeslaDeviceEntity(TeslaDevice, TrackerEntity):
         """Return the source type, eg gps or router, of the device."""
         return SOURCE_TYPE_GPS
 
+    @Throttle(timedelta(seconds=1))
     def _process_websocket_message(self, data):
         if (
             data.get("msg_type")
