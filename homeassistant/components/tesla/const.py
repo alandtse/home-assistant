@@ -3,6 +3,7 @@ DOMAIN = "tesla"
 DATA_LISTENER = "listener"
 DEFAULT_SCAN_INTERVAL = 660
 MIN_SCAN_INTERVAL = 60
+ATTR_ACCESS_TOKEN_EXPIRATION = "access_token_expiration"
 TESLA_COMPONENTS = [
     "sensor",
     "lock",

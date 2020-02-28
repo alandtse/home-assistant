@@ -4,7 +4,11 @@ from unittest.mock import patch
 from teslajsonpy import TeslaException
 
 from homeassistant import config_entries, data_entry_flow, setup
-from homeassistant.components.tesla.const import DOMAIN, MIN_SCAN_INTERVAL
+from homeassistant.components.tesla.const import (
+    ATTR_ACCESS_TOKEN_EXPIRATION,
+    DOMAIN,
+    MIN_SCAN_INTERVAL,
+)
 from homeassistant.const import (
     CONF_ACCESS_TOKEN,
     CONF_PASSWORD,
@@ -29,6 +33,9 @@ async def test_form(hass):
         "homeassistant.components.tesla.config_flow.TeslaAPI.connect",
         return_value=mock_coro(("test-refresh-token", "test-access-token")),
     ), patch(
+        "homeassistant.components.tesla.config_flow.TeslaAPI.get_expiration",
+        return_value=100,
+    ), patch(
         "homeassistant.components.tesla.async_setup", return_value=mock_coro(True)
     ) as mock_setup, patch(
         "homeassistant.components.tesla.async_setup_entry", return_value=mock_coro(True)
@@ -42,6 +49,7 @@ async def test_form(hass):
     assert result2["data"] == {
         CONF_TOKEN: "test-refresh-token",
         CONF_ACCESS_TOKEN: "test-access-token",
+        ATTR_ACCESS_TOKEN_EXPIRATION: 100,
     }
     await hass.async_block_till_done()
     assert len(mock_setup.mock_calls) == 1
@@ -123,6 +131,7 @@ async def test_import(hass):
     assert result["title"] == "test-username"
     assert result["data"][CONF_ACCESS_TOKEN] == "test-access-token"
     assert result["data"][CONF_TOKEN] == "test-refresh-token"
+    assert result["data"][ATTR_ACCESS_TOKEN_EXPIRATION] == 0
     assert result["description_placeholders"] is None
 
 

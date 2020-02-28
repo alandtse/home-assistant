@@ -15,7 +15,12 @@ from homeassistant.const import (
 from homeassistant.core import callback
 from homeassistant.helpers import aiohttp_client, config_validation as cv
 
-from .const import DEFAULT_SCAN_INTERVAL, DOMAIN, MIN_SCAN_INTERVAL
+from .const import (
+    ATTR_ACCESS_TOKEN_EXPIRATION,
+    DEFAULT_SCAN_INTERVAL,
+    DOMAIN,
+    MIN_SCAN_INTERVAL,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -127,6 +132,7 @@ async def validate_input(hass: core.HomeAssistant, data):
         (config[CONF_TOKEN], config[CONF_ACCESS_TOKEN]) = await controller.connect(
             test_login=True
         )
+        config[ATTR_ACCESS_TOKEN_EXPIRATION] = controller.get_expiration()
     except TeslaException as ex:
         if ex.code == 401:
             _LOGGER.error("Invalid credentials: %s", ex)

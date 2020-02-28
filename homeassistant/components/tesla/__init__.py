@@ -28,6 +28,7 @@ from .config_flow import (
     validate_input,
 )
 from .const import (
+    ATTR_ACCESS_TOKEN_EXPIRATION,
     DATA_LISTENER,
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
@@ -55,13 +56,14 @@ CONFIG_SCHEMA = vol.Schema(
 
 
 @callback
-def _async_save_tokens(hass, config_entry, access_token, refresh_token):
+def _async_save_tokens(hass, config_entry, access_token, refresh_token, expiration):
     hass.config_entries.async_update_entry(
         config_entry,
         data={
             **config_entry.data,
             CONF_ACCESS_TOKEN: access_token,
             CONF_TOKEN: refresh_token,
+            ATTR_ACCESS_TOKEN_EXPIRATION: expiration,
         },
     )
 
@@ -93,6 +95,7 @@ async def async_setup(hass, base_config):
             data={
                 CONF_ACCESS_TOKEN: info[CONF_ACCESS_TOKEN],
                 CONF_TOKEN: info[CONF_TOKEN],
+                ATTR_ACCESS_TOKEN_EXPIRATION: info[ATTR_ACCESS_TOKEN_EXPIRATION],
             },
             options={CONF_SCAN_INTERVAL: scan_interval},
         )
@@ -127,15 +130,17 @@ async def async_setup_entry(hass, config_entry):
             websession,
             refresh_token=config[CONF_TOKEN],
             access_token=config[CONF_ACCESS_TOKEN],
+            expiration=config.get(ATTR_ACCESS_TOKEN_EXPIRATION, 0),
             update_interval=config_entry.options.get(
                 CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL
             ),
         )
         (refresh_token, access_token) = await controller.connect()
+        expiration = controller.get_expiration()
     except TeslaException as ex:
         _LOGGER.error("Unable to communicate with Tesla API: %s", ex.message)
         return False
-    _async_save_tokens(hass, config_entry, access_token, refresh_token)
+    _async_save_tokens(hass, config_entry, access_token, refresh_token, expiration)
     entry_data = hass.data[DOMAIN][config_entry.entry_id] = {
         "controller": controller,
         "devices": defaultdict(list),
@@ -251,8 +256,9 @@ class TeslaDevice(Entity):
         """Update the state of the device."""
         if self.controller.is_token_refreshed():
             (refresh_token, access_token) = self.controller.get_tokens()
+            expiration = self.controller.get_expiration()
             _async_save_tokens(
-                self.hass, self.config_entry, access_token, refresh_token
+                self.hass, self.config_entry, access_token, refresh_token, expiration
             )
             _LOGGER.debug("Saving new tokens in config_entry")
         await self.tesla_device.async_update()
