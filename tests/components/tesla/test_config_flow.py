@@ -6,10 +6,8 @@ from teslajsonpy import TeslaException
 from homeassistant import config_entries, data_entry_flow, setup
 from homeassistant.components.tesla.const import (
     CONF_ENABLE_WEBSOCKETS,
-    CONF_WAKE_ON_START,
     DEFAULT_ENABLE_WEBSOCKETS,
     DEFAULT_SCAN_INTERVAL,
-    DEFAULT_WAKE_ON_START,
     DOMAIN,
     MIN_SCAN_INTERVAL,
 )
@@ -146,17 +144,12 @@ async def test_option_flow(hass):
 
     result = await hass.config_entries.options.async_configure(
         result["flow_id"],
-        user_input={
-            CONF_SCAN_INTERVAL: 350,
-            CONF_ENABLE_WEBSOCKETS: True,
-            CONF_WAKE_ON_START: True,
-        },
+        user_input={CONF_SCAN_INTERVAL: 350, CONF_ENABLE_WEBSOCKETS: True},
     )
     assert result["type"] == "create_entry"
     assert result["data"] == {
         CONF_SCAN_INTERVAL: 350,
         CONF_ENABLE_WEBSOCKETS: True,
-        CONF_WAKE_ON_START: True,
     }
 
 
@@ -177,7 +170,6 @@ async def test_option_flow_defaults(hass):
     assert result["data"] == {
         CONF_SCAN_INTERVAL: DEFAULT_SCAN_INTERVAL,
         CONF_ENABLE_WEBSOCKETS: DEFAULT_ENABLE_WEBSOCKETS,
-        CONF_WAKE_ON_START: DEFAULT_WAKE_ON_START,
     }
 
 
@@ -198,5 +190,4 @@ async def test_option_flow_input_floor(hass):
     assert result["data"] == {
         CONF_SCAN_INTERVAL: MIN_SCAN_INTERVAL,
         CONF_ENABLE_WEBSOCKETS: DEFAULT_ENABLE_WEBSOCKETS,
-        CONF_WAKE_ON_START: DEFAULT_WAKE_ON_START,
     }

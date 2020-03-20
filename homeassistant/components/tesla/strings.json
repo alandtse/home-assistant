@@ -23,8 +23,7 @@
       "init": {
         "data": {
           "scan_interval": "Seconds between scans",
-          "enable_websockets": "Connect with websockets",
-          "enable_wake_on_start": "Force cars awake on startup"
+          "enable_websockets": "Connect with websockets"
         }
       }
     }

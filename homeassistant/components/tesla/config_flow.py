@@ -17,10 +17,8 @@ from homeassistant.helpers import aiohttp_client, config_validation as cv
 
 from .const import (
     CONF_ENABLE_WEBSOCKETS,
-    CONF_WAKE_ON_START,
     DEFAULT_ENABLE_WEBSOCKETS,
     DEFAULT_SCAN_INTERVAL,
-    DEFAULT_WAKE_ON_START,
     DOMAIN,
     MIN_SCAN_INTERVAL,
 )
@@ -116,12 +114,6 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     CONF_ENABLE_WEBSOCKETS,
                     default=self.config_entry.options.get(
                         CONF_ENABLE_WEBSOCKETS, DEFAULT_ENABLE_WEBSOCKETS
-                    ),
-                ): bool,
-                vol.Optional(
-                    CONF_WAKE_ON_START,
-                    default=self.config_entry.options.get(
-                        CONF_WAKE_ON_START, DEFAULT_WAKE_ON_START
                     ),
                 ): bool,
             }

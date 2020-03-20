@@ -29,11 +29,9 @@ from .config_flow import (
 )
 from .const import (
     CONF_ENABLE_WEBSOCKETS,
-    CONF_WAKE_ON_START,
     DATA_LISTENER,
     DEFAULT_ENABLE_WEBSOCKETS,
     DEFAULT_SCAN_INTERVAL,
-    DEFAULT_WAKE_ON_START,
     DOMAIN,
     ICONS,
     MIN_SCAN_INTERVAL,
@@ -78,7 +76,6 @@ async def async_setup(hass, base_config):
         options = options or {
             CONF_SCAN_INTERVAL: DEFAULT_SCAN_INTERVAL,
             CONF_ENABLE_WEBSOCKETS: DEFAULT_ENABLE_WEBSOCKETS,
-            CONF_WAKE_ON_START: DEFAULT_WAKE_ON_START,
         }
         for entry in hass.config_entries.async_entries(DOMAIN):
             if email != entry.title:
@@ -142,11 +139,7 @@ async def async_setup_entry(hass, config_entry):
                 CONF_ENABLE_WEBSOCKETS, DEFAULT_ENABLE_WEBSOCKETS
             ),
         )
-        (refresh_token, access_token) = await controller.connect(
-            wake_if_asleep=config_entry.options.get(
-                CONF_WAKE_ON_START, DEFAULT_WAKE_ON_START
-            )
-        )
+        (refresh_token, access_token) = await controller.connect()
     except TeslaException as ex:
         _LOGGER.error("Unable to communicate with Tesla API: %s", ex.message)
         return False
