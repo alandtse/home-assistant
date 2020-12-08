@@ -997,7 +997,7 @@ pilight==0.1.1
 # homeassistant.components.qrcode
 # homeassistant.components.seven_segments
 # homeassistant.components.tensorflow
-pillow==6.2.1
+pillow==7.1.0
 
 # homeassistant.components.dominos
 pizzapi==0.0.3
