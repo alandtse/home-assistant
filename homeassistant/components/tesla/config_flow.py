@@ -24,7 +24,7 @@ from homeassistant.const import (
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import UnknownFlow
 from homeassistant.exceptions import Unauthorized
-from homeassistant.helpers import aiohttp_client, config_validation as cv
+from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.network import NoURLAvailableError, get_url
 
 from .const import (
@@ -80,9 +80,8 @@ class TeslaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     async def async_step_start_oauth(self, user_input=None):
         """Start oauth step for login."""
         self.warning_shown = False
-        websession = aiohttp_client.async_create_clientsession(self.hass)
         self.controller = TeslaAPI(
-            websession,
+            websession=None,
             update_interval=DEFAULT_SCAN_INTERVAL,
         )
         host_url: URL = self.controller.get_oauth_url()
@@ -215,12 +214,11 @@ async def validate_input(hass: core.HomeAssistant, data, controller: TeslaAPI = 
     """
 
     config = {}
-    websession = aiohttp_client.async_create_clientsession(hass)
 
     try:
         if not controller:
             controller = TeslaAPI(
-                websession,
+                websession=None,
                 email=data.get(CONF_USERNAME),
                 password=data.get(CONF_PASSWORD),
                 refresh_token=data.get(CONF_TOKEN),

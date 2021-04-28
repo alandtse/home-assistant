@@ -18,7 +18,6 @@ from homeassistant.const import (
     HTTP_UNAUTHORIZED,
 )
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers import aiohttp_client
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .config_flow import CannotConnect, InvalidAuth, validate_input
@@ -106,8 +105,6 @@ async def async_setup_entry(hass, config_entry):
     """Set up Tesla as config entry."""
     hass.data.setdefault(DOMAIN, {})
     config = config_entry.data
-    # Because users can have multiple accounts, we always create a new session so they have separate cookies
-    websession = aiohttp_client.async_create_clientsession(hass)
     email = config_entry.title
     if email in hass.data[DOMAIN] and CONF_SCAN_INTERVAL in hass.data[DOMAIN][email]:
         scan_interval = hass.data[DOMAIN][email][CONF_SCAN_INTERVAL]
@@ -117,7 +114,7 @@ async def async_setup_entry(hass, config_entry):
         hass.data[DOMAIN].pop(email)
     try:
         controller = TeslaAPI(
-            websession,
+            websession=None,
             email=config.get(CONF_USERNAME),
             password=config.get(CONF_PASSWORD),
             refresh_token=config[CONF_TOKEN],
@@ -183,6 +180,9 @@ async def async_unload_entry(hass, config_entry) -> bool:
             ]
         )
     )
+    await hass.data[DOMAIN].get(config_entry.entry_id)[
+        "coordinator"
+    ].controller.disconnect()
     for listener in hass.data[DOMAIN][config_entry.entry_id][DATA_LISTENER]:
         listener()
     username = config_entry.title

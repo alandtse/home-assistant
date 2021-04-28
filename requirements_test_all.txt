@@ -38,6 +38,9 @@ RtmAPI==0.7.2
 # homeassistant.components.onvif
 WSDiscovery==2.0.0
 
+# homeassistant.components.waze_travel_time
+WazeRouteCalculator==0.12
+
 # homeassistant.components.abode
 abodepy==1.2.0
 
@@ -296,6 +299,9 @@ emulated_roku==0.2.1
 # homeassistant.components.enocean
 enocean==0.50
 
+# homeassistant.components.enphase_envoy
+envoy_reader==0.18.3
+
 # homeassistant.components.season
 ephem==3.7.7.0
 
@@ -371,6 +377,9 @@ google-cloud-pubsub==2.1.0
 
 # homeassistant.components.nest
 google-nest-sdm==0.2.12
+
+# homeassistant.components.google_travel_time
+googlemaps==2.5.1
 
 # homeassistant.components.gree
 greeclimate==0.10.3
@@ -517,6 +526,9 @@ netdisco==2.8.2
 
 # homeassistant.components.nexia
 nexia==0.9.5
+
+# homeassistant.components.notify_events
+notify-events==1.0.4
 
 # homeassistant.components.nsw_fuel_station
 nsw-fuel-api-client==1.0.10
@@ -1141,7 +1153,7 @@ tellduslive==0.10.11
 tesla-powerwall==0.3.5
 
 # homeassistant.components.tesla
-teslajsonpy==0.17.1
+teslajsonpy==0.18.0
 
 # homeassistant.components.toon
 toonapi==0.2.0
